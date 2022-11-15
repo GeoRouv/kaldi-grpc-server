@@ -12,16 +12,31 @@ import math
 def score_plda(config, target_energy=0.1):
     print("\nInitializing PLDA scoring...")
 
-    ivector_subtract_global_mean("ark:/kaldigrpc/diarizer_model/data/xvectors.ark",
-                                 "/kaldigrpc/diarizer_model/data/mean.vec", "ark:/kaldigrpc/diarizer_model/data/subtracted_mean_xvectors.ark")
-    transform_vec("/kaldigrpc/diarizer_model/data/transform.mat", "ark:/kaldigrpc/diarizer_model/data/subtracted_mean_xvectors.ark",
-                  "ark:/kaldigrpc/diarizer_model/data/transformed_subtracted_mean_xvectors.ark")
-    ivector_normalize_length("ark:/kaldigrpc/diarizer_model/data/transformed_subtracted_mean_xvectors.ark",
-                             "ark:/kaldigrpc/diarizer_model/data/plda_xvectors.ark")
+    ivector_subtract_global_mean(
+        "ark:/kaldigrpc/diarizer_model/data/xvectors.ark",
+        "/kaldigrpc/diarizer_model/data/mean.vec",
+        "ark:/kaldigrpc/diarizer_model/data/subtracted_mean_xvectors.ark"
+    )
+    
+    transform_vec(
+        "/kaldigrpc/diarizer_model/data/transform.mat",
+        "ark:/kaldigrpc/diarizer_model/data/subtracted_mean_xvectors.ark",
+        "ark:/kaldigrpc/diarizer_model/data/transformed_subtracted_mean_xvectors.ark"
+    )
+    
+    ivector_normalize_length(
+        "ark:/kaldigrpc/diarizer_model/data/transformed_subtracted_mean_xvectors.ark",
+        "ark:/kaldigrpc/diarizer_model/data/plda_xvectors.ark"
+    )
 
     print("\nScoring xvectors...")
-    ivector_plda_scoring_dense(config.model_cfg.plda, "/kaldigrpc/diarizer_model/data/spk2utt", "ark:/kaldigrpc/diarizer_model/data/plda_xvectors.ark",
-                               "ark,scp:/kaldigrpc/diarizer_model/data/scores.ark,/kaldigrpc/diarizer_model/data/scores.scp", target_energy)
+    ivector_plda_scoring_dense(
+        config.model_cfg.plda,
+        "/kaldigrpc/diarizer_model/data/spk2utt",
+        "ark:/kaldigrpc/diarizer_model/data/plda_xvectors.ark",
+        "ark,scp:/kaldigrpc/diarizer_model/data/scores.ark,/kaldigrpc/diarizer_model/data/scores.scp", 
+        target_energy
+    )
 
     print("\nPLDA scoring complete!")
 
